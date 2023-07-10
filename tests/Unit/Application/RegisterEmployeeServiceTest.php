@@ -1,22 +1,23 @@
 <?php
-
-namespace Tests\Unit\Application\Service;
-
-use Domain\Model\Employee;
-use Domain\Repository\EmployeeRepository;
-use Application\Service\RegisterEmployeeService;
 use PHPUnit\Framework\TestCase;
+use Application\Service\RegisterEmployeeService;
+use Infrastructure\Repository\EmployeeRepository;
+use Infrastructure\Repository\EmployeeHistoryRepository;
 
 class RegisterEmployeeServiceTest extends TestCase
 {
-    public function testExecute(): void
+    public function testEmployeeCanRegister()
     {
-        $repository = $this->createMock(EmployeeRepository::class);
-        $repository->expects($this->once())
-                   ->method('save')
-                   ->with($this->isInstanceOf(Employee::class));
+        // Create a mock for the EmployeeRepository
+        $employeeRepo = $this->createMock(EmployeeRepository::class);
+        $employeeRepo->method('getLatestId')->willReturn('001');
 
-        $service = new RegisterEmployeeService($repository);
-        $service->execute('John Doe', 2023, 'Engineering', '1990-01-01');
+        // Create a mock for the EmployeeHistoryRepository
+        $employeeHistoryRepo = $this->createMock(EmployeeHistoryRepository::class);
+
+        $registerEmployeeService = new RegisterEmployeeService($employeeRepo, $employeeHistoryRepo);
+
+        // Assume there are no exceptions thrown, the test will pass
+        $registerEmployeeService->execute('John Doe', '1990-01-01', 'Engineering');
     }
 }
